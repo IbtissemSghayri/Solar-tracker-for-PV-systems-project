@@ -1,0 +1,49 @@
+#include <Servo.h>
+
+const int ldrgauche = A0;  
+const int ldrdroite = A1;
+const int servoPin = 2;    
+
+int seuil = 150;
+
+int angleActuel = 90;
+
+Servo monServo;
+
+void setup() {
+  monServo.attach(servoPin);
+  monServo.write(angleActuel); 
+  
+  Serial.begin(9600);
+}
+
+void loop() {
+  int valGauche = analogRead(ldrgauche);
+  int valDroite = analogRead(ldrdroite);
+
+  // affichage
+  Serial.print("LDR Gauche: ");
+  Serial.print(valGauche);
+  Serial.print(" | LDR Droite: ");
+  Serial.println(valDroite);
+
+  int cible = angleActuel;
+
+  if (valGauche > seuil && valGauche > valDroite) {
+    cible = 180;
+  }
+  else if (valDroite > seuil && valDroite > valGauche) {
+    cible = 90;
+  }
+
+  if (angleActuel < cible) {
+    angleActuel++;
+    monServo.write(angleActuel);
+  }
+  else if (angleActuel > cible) {
+    angleActuel--;
+    monServo.write(angleActuel);
+  }
+
+  delay(30);
+}
